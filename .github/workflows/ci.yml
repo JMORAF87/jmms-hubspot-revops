@@ -1,0 +1,51 @@
+name: RevOps V1 CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Compile Python
+        run: |
+          python3 -m py_compile \
+            src/read_deals.py \
+            src/update_test_deal.py \
+            src/upsert_deal.py \
+            src/upsert_relationships.py \
+            src/sync_growth_os.py \
+            src/revenue_leak_monitor.py \
+            scripts/ensure_opportunity_ids.py \
+            scripts/validate_opportunity_log.py
+
+      - name: Validate synthetic opportunity dataset
+        run: |
+          python3 scripts/validate_opportunity_log.py
+
+      - name: Run Revenue Leak tests
+        run: |
+          python3 -m unittest tests/test_revenue_leak_monitor.py -v
+
+      - name: Validate n8n export
+        run: |
+          python3 -m json.tool \
+            n8n/hubspot-revops-orchestrator.json \
+            >/dev/null

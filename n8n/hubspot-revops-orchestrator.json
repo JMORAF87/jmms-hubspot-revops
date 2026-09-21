@@ -1,0 +1,443 @@
+{
+  "name": "JMMS | Growth OS → HubSpot Orchestrator",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## HubSpot RevOps Public Orchestration Demo\n**Architecture:** n8n → GitHub Actions → deterministic Python dry run\n\n**Safe default:** `dry_run`\n\nBefore the first run:\n1. Publish `public-orchestrator.yml` on the default branch (`main`).\n2. Create an n8n **Header Auth** credential named `GitHub Actions Token`.\n3. Use:\n   - Header: `Authorization`\n   - Value: `Bearer <fine-grained GitHub PAT>`\n4. Give the token access only to this repository with Actions permission.\n5. Select that credential in the GitHub HTTP Request nodes.\n\nRepository template:\n`YOUR_GITHUB_USERNAME/jmms-hubspot-revops`\n\nThe public orchestration path supports `dry_run` only and does not require a HubSpot credential.",
+        "height": 430,
+        "width": 620
+      },
+      "id": "da910a60-225e-4e5c-a280-0f091e54668f",
+      "name": "SETUP — READ FIRST",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        528,
+        -256
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "47cc2891-8ce7-429b-b52e-066f818695f2",
+      "name": "Manual Test",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        608,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39f263fa-0e4c-4f84-aa9b-842189cdd019",
+              "name": "github_owner",
+              "value": "YOUR_GITHUB_USERNAME",
+              "type": "string"
+            },
+            {
+              "id": "b5dfe0a4-4b50-4114-aaa6-b3840fb856b5",
+              "name": "github_repo",
+              "value": "jmms-hubspot-revops",
+              "type": "string"
+            },
+            {
+              "id": "d1a94a2f-9d83-481c-9388-157e6c32f263",
+              "name": "workflow_file",
+              "value": "public-orchestrator.yml",
+              "type": "string"
+            },
+            {
+              "id": "6a0937ee-cdae-4933-8654-ea861cfcb398",
+              "name": "dispatch_ref",
+              "value": "main",
+              "type": "string"
+            },
+            {
+              "id": "cb2cb74f-36ea-48c2-9080-b567b24d75e2",
+              "name": "target_ref",
+              "value": "main",
+              "type": "string"
+            },
+            {
+              "id": "f212367e-b97e-4295-a82a-161e3b34372c",
+              "name": "sync_mode",
+              "value": "dry_run",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f07ced6e-0689-4744-a030-273c555c5ad2",
+      "name": "Runtime Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        848,
+        256
+      ],
+      "notesInFlow": true,
+      "notes": "Public template supports dry_run only. It dispatches the non-mutating public-orchestrator workflow."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.github.com/repos/' + $json.github_owner + '/' + $json.github_repo + '/actions/workflows/' + $json.workflow_file + '/dispatches' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "X-GitHub-Api-Version",
+              "value": "2026-03-10"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  ref: $json.dispatch_ref,\n  inputs: {\n    target_ref: $json.target_ref,\n    sync_mode: $json.sync_mode\n  },\n  return_run_details: true\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "773c6c21-fdf4-4055-86a9-66e4609fa80d",
+      "name": "Dispatch GitHub Action",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1136,
+        256
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "IDWvV6d8eAXVB0zB",
+          "name": "Header Auth account"
+        },
+        "githubApi": {
+          "id": "QYtGgCHAwOh9Jezt",
+          "name": "GitHub account"
+        }
+      },
+      "notes": "Select the n8n Header Auth credential `GitHub Actions Token` here."
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "id": "998e27c2-a7bf-4c01-9aa8-8f2c85c2ceec",
+      "name": "Wait 10 Seconds",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1408,
+        256
+      ],
+      "webhookId": "ce96d23f-9758-43e4-ace5-5a624df54186"
+    },
+    {
+      "parameters": {
+        "url": "={{ $node[\"Dispatch GitHub Action\"].json[\"run_url\"] }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "X-GitHub-Api-Version",
+              "value": "2026-03-10"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "ed04dd7f-74a2-4527-87c5-223befe9ff4a",
+      "name": "Get GitHub Run",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1696,
+        256
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "notesInFlow": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "IDWvV6d8eAXVB0zB",
+          "name": "Header Auth account"
+        },
+        "githubApi": {
+          "id": "QYtGgCHAwOh9Jezt",
+          "name": "GitHub account"
+        }
+      },
+      "notes": "Select the same n8n Header Auth credential `GitHub Actions Token` here."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f827375a-0feb-4ca0-af5b-680c7d6b4ad9",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "713dda3b-d102-4c35-82ef-64eb8aa79f64",
+      "name": "Is GitHub Run Complete?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1968,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "844345cc-2840-46c0-9a8e-3ca5ae40b6e4",
+              "leftValue": "={{ $json.conclusion }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "00b7f80b-6d8c-4fb9-bd0f-46033710e2d5",
+      "name": "Was GitHub Run Successful?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2240,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "051c5af4-f8be-43fe-86e1-db6b26f8674e",
+              "name": "status",
+              "value": "PASS",
+              "type": "string"
+            },
+            {
+              "id": "366f2919-0703-4e2a-9bc0-de0913d1897a",
+              "name": "workflow_run_id",
+              "value": "={{ $node[\"Dispatch GitHub Action\"].json[\"workflow_run_id\"] }}",
+              "type": "number"
+            },
+            {
+              "id": "0c66a929-36ef-4562-9af6-d44ff84e7303",
+              "name": "github_run_url",
+              "value": "={{ $json.html_url }}",
+              "type": "string"
+            },
+            {
+              "id": "b15c37a8-cd00-4b04-8cae-e6690fc4f90e",
+              "name": "conclusion",
+              "value": "={{ $json.conclusion }}",
+              "type": "string"
+            },
+            {
+              "id": "89b28716-796d-4dec-a9dc-985d32d08d6b",
+              "name": "sync_mode",
+              "value": "={{ $node[\"Runtime Config\"].json[\"sync_mode\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "8e9a91a6-fcd3-4e72-86d0-fbb79295d893",
+              "name": "target_ref",
+              "value": "={{ $node[\"Runtime Config\"].json[\"target_ref\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "63000734-3e47-4fb0-8dc8-9751a72b8e22",
+      "name": "Success Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2496,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "={{ 'GitHub Action failed. conclusion=' + ($json.conclusion || 'unknown') + ' run=' + ($json.html_url || $node[\"Dispatch GitHub Action\"].json[\"html_url\"] || 'unknown') }}"
+      },
+      "id": "a4815060-f977-488a-8f3e-dacdc838fea9",
+      "name": "Stop — GitHub Run Failed",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        2496,
+        304
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Test": {
+      "main": [
+        [
+          {
+            "node": "Runtime Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Runtime Config": {
+      "main": [
+        [
+          {
+            "node": "Dispatch GitHub Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dispatch GitHub Action": {
+      "main": [
+        [
+          {
+            "node": "Wait 10 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 10 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Get GitHub Run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get GitHub Run": {
+      "main": [
+        [
+          {
+            "node": "Is GitHub Run Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is GitHub Run Complete?": {
+      "main": [
+        [
+          {
+            "node": "Was GitHub Run Successful?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 10 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Was GitHub Run Successful?": {
+      "main": [
+        [
+          {
+            "node": "Success Summary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop — GitHub Run Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "0d4796cb-2119-4f37-833c-4e774428e4ab",
+  "meta": {
+    "instanceId": "13d661b79d7db0b2ca6892ee873a65e950f784c1d7757db15c76b9a14c76964a"
+  },
+  "nodeGroups": [],
+  "id": "UB2QW6FAEPxtBGvE",
+  "tags": []
+}

@@ -1,0 +1,65 @@
+name: Public RevOps Orchestrator Demo
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_ref:
+        description: Branch or tag containing the public RevOps code
+        required: true
+        default: main
+        type: string
+      sync_mode:
+        description: Safe public execution mode
+        required: true
+        default: dry_run
+        type: choice
+        options:
+          - dry_run
+
+permissions:
+  contents: read
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      TARGET_REF: ${{ inputs.target_ref }}
+      MODE: ${{ inputs.sync_mode }}
+
+    steps:
+      - name: Check out requested ref
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.TARGET_REF }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Validate public project
+        run: |
+          set -euo pipefail
+
+          python3 -m py_compile \
+            src/sync_growth_os.py \
+            src/revenue_leak_monitor.py
+
+          python3 scripts/validate_opportunity_log.py
+
+          python3 -m unittest \
+            tests/test_revenue_leak_monitor.py \
+            -v
+
+      - name: Run safe Growth OS dry run
+        run: |
+          set -euo pipefail
+
+          if [[ "$MODE" != "dry_run" ]]; then
+            echo "::error::Public workflow supports dry_run only."
+            exit 2
+          fi
+
+          python3 src/sync_growth_os.py
