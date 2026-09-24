@@ -4,6 +4,12 @@ A HubSpot-centered Revenue Operations system that connects opportunity intellige
 
 Built as a working JM Multiservices engineering project and sanitized here as a standalone technical portfolio implementation.
 
+## Demo
+
+Watch the 3-minute technical case study:
+
+[HubSpot RevOps Control System — Video Case Study](https://vimeo.com/1229718428)
+
 ## What It Solves
 
 CRM automation becomes risky when multiple systems can modify the same commercial state without clear ownership.
