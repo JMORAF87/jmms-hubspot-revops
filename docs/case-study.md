@@ -1,4 +1,4 @@
-# Case Study — HubSpot-Centered Revenue Leak Control System
+# Case Study - HubSpot-Centered Revenue Leak Control System
 
 ## Executive Summary
 

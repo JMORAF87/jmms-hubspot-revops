@@ -135,7 +135,7 @@ Object: Deal
 
 Type: Number
 
-Expected range: 0–100
+Expected range: 0-100
 
 Purpose:
 Stores the deterministic Growth OS opportunity qualification score.

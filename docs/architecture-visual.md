@@ -1,4 +1,4 @@
-# JMMS HubSpot RevOps V1 — Architecture Overview
+# JMMS HubSpot RevOps V1 - Architecture Overview
 
 This diagram summarizes the implemented JMMS HubSpot-centered RevOps system.
 

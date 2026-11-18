@@ -8,7 +8,7 @@ Built as a working JM Multiservices engineering project and sanitized here as a 
 
 Watch the 3-minute technical case study:
 
-[HubSpot RevOps Control System — Video Case Study](https://vimeo.com/1229718428)
+[HubSpot RevOps Control System: Video Case Study](https://vimeo.com/1229718428)
 
 ## What It Solves
 
@@ -83,7 +83,7 @@ flowchart LR
 | Revenue Leak Monitor | Deterministic CRM health classification |
 | n8n | Operator-facing orchestration |
 | GitHub Actions | CI, remote execution pattern, tests, validation |
-| AI | Research, enrichment, recommendations — not CRM source of truth |
+| AI | Research, enrichment, recommendations - not CRM source of truth |
 
 ---
 
@@ -458,12 +458,12 @@ The implementation uses several explicit safety boundaries:
 
 More detail is available in:
 
-- [`docs/architecture.md`](docs/architecture.md) — complete system design
-- [`docs/architecture-visual.md`](docs/architecture-visual.md) — architecture diagrams
-- [`docs/case-study.md`](docs/case-study.md) — engineering and RevOps case study
-- [`schema/mappings.md`](schema/mappings.md) — synchronization contract
-- [`schema/pipeline.md`](schema/pipeline.md) — CRM pipeline design
-- [`schema/properties.md`](schema/properties.md) — HubSpot custom property schema
+- [`docs/architecture.md`](docs/architecture.md) - complete system design
+- [`docs/architecture-visual.md`](docs/architecture-visual.md) - architecture diagrams
+- [`docs/case-study.md`](docs/case-study.md) - engineering and RevOps case study
+- [`schema/mappings.md`](schema/mappings.md) - synchronization contract
+- [`schema/pipeline.md`](schema/pipeline.md) - CRM pipeline design
+- [`schema/properties.md`](schema/properties.md) - HubSpot custom property schema
 
 ---
 

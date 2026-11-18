@@ -1,4 +1,4 @@
-# JMMS HubSpot RevOps V1 — Demo Script
+# JMMS HubSpot RevOps V1 - Demo Script
 
 ## Demo Objective
 
@@ -14,7 +14,7 @@ Demonstrate a working HubSpot-centered RevOps system that connects:
 
 Target duration:
 
-`2.5–4 minutes`
+`2.5-4 minutes`
 
 Audience:
 
@@ -57,7 +57,7 @@ Do not show:
 
 ---
 
-## 0:00–0:20 — Problem
+## 0:00-0:20 - Problem
 
 ### Screen
 
@@ -71,7 +71,7 @@ Show the project title or architecture overview.
 
 ---
 
-## 0:20–0:45 — Architecture
+## 0:20-0:45 - Architecture
 
 ### Screen
 
@@ -107,7 +107,7 @@ n8n
 
 ---
 
-## 0:45–1:15 — Stable Identity and Idempotency
+## 0:45-1:15 - Stable Identity and Idempotency
 
 ### Screen
 
@@ -135,7 +135,7 @@ Optionally show the corresponding architecture or mapping documentation.
 
 ---
 
-## 1:15–1:40 — CRM Ownership Boundary
+## 1:15-1:40 - CRM Ownership Boundary
 
 ### Screen
 
@@ -155,7 +155,7 @@ Show the relevant property values without editing them.
 
 ---
 
-## 1:40–2:15 — Revenue Leak Monitor
+## 1:40-2:15 - Revenue Leak Monitor
 
 ### Screen
 
@@ -191,7 +191,7 @@ Healthy
 
 ---
 
-## 2:15–2:35 — Automated Testing
+## 2:15-2:35 - Automated Testing
 
 ### Screen
 
@@ -207,7 +207,7 @@ Show the successful test evidence or GitHub Actions validation step.
 
 ---
 
-## 2:35–3:00 — n8n and GitHub Actions
+## 2:35-3:00 - n8n and GitHub Actions
 
 ### Screen
 
@@ -228,7 +228,7 @@ Then show the successful GitHub Actions run.
 
 ---
 
-## 3:00–3:20 — Scheduled Monitoring and Observability
+## 3:00-3:20 - Scheduled Monitoring and Observability
 
 ### Screen
 
@@ -251,7 +251,7 @@ Point out:
 
 ---
 
-## 3:20–3:40 — Close
+## 3:20-3:40 - Close
 
 ### Screen
 
